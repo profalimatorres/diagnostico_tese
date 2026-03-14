@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico Pré-Qualificação — Seminário de Tese I</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a1a;font-size:14px;line-height:1.6;background:#f9f8f6;min-height:100vh;padding:2rem 1rem}
+.container{max-width:760px;margin:0 auto;background:#fff;border-radius:12px;border:0.5px solid #e0ded6;padding:2rem 2.25rem}
+
+.header-band{background:#dddceb;border-radius:10px;padding:1.1rem 1.4rem;margin-bottom:1.75rem;border-left:4px solid #534AB7}
+.header-tag{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:#534AB7;margin-bottom:3px}
+.header-title{font-size:20px;font-weight:500;color:#26215C;margin-bottom:2px}
+.header-sub{font-size:13px;color:#3C3489;line-height:1.5;text-align:justify}
+
+.context-note{font-size:12.5px;color:#5F5E5A;background:#F9F8F6;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.5rem;border:0.5px solid #e0ded6;line-height:1.6}
+.context-note strong{font-size:14px;color:#1a1a1a;font-weight:500}
+
+.phase-nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1.5rem}
+.pnav-btn{padding:5px 11px;border-radius:20px;border:0.5px solid #d3d1c7;background:transparent;cursor:pointer;font-size:12px;color:#5F5E5A;transition:all .15s;white-space:nowrap}
+.pnav-btn:hover{background:#f1efe8}
+.pnav-btn.active{background:#EEEDFE;border-color:#AFA9EC;color:#3C3489;font-weight:500}
+.pnav-btn.done{background:#E1F5EE;border-color:#5DCAA5;color:#085041}
+.pnav-result{margin-left:auto}
+
+.progress-wrap{margin-bottom:1.25rem}
+.progress-meta{display:flex;justify-content:space-between;font-size:11px;color:#aaa;margin-bottom:5px}
+.progress-bar{height:3px;background:#e8e6de;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;background:#7F77DD;transition:width .35s}
+
+.phase-header{margin-bottom:1.25rem}
+.phase-tag{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:#888780;margin-bottom:3px}
+.phase-title{font-size:17px;font-weight:500;color:#1a1a1a}
+.phase-desc{font-size:13px;color:#888780;margin-top:4px;line-height:1.5}
+.phase-why{font-size:12px;color:#534AB7;background:#EEEDFE;border-radius:6px;padding:6px 10px;margin-top:8px;line-height:1.5;text-align:justify}
+
+.q-block{padding:13px 0;border-bottom:0.5px solid #ebe9e1}
+.q-block:last-child{border-bottom:none}
+.q-num{font-size:11px;color:#8945f0;font-weight:500;margin-bottom:2px}
+.q-text{font-size:13.5px;color:#1a1a1a;margin-bottom:10px;line-height:1.5;text-align:justify}
+.q-note{font-size:11.5px;color:#888780;margin-bottom:10px;font-style:italic;text-align:justify}
+.scale-btns{display:flex;gap:4px}
+.s-btn{flex:1;height:30px;border-radius:6px;border:0.5px solid #d3d1c7;background:transparent;cursor:pointer;font-size:12px;font-weight:500;color:#5F5E5A;transition:all .12s}
+.s-btn:hover{background:#f1efe8;border-color:#aaa}
+.s-btn.sel-1,.s-btn.sel-2{background:#FCEBEB;border-color:#F09595;color:#791F1F}
+.s-btn.sel-3,.s-btn.sel-4{background:#FAEEDA;border-color:#EF9F27;color:#633806}
+.s-btn.sel-5,.s-btn.sel-6{background:#EEEDFE;border-color:#AFA9EC;color:#3C3489}
+.s-btn.sel-7{background:#E1F5EE;border-color:#5DCAA5;color:#085041}
+.scale-labels{display:flex;justify-content:space-between;font-size:10.5px;color:#b0adb4;margin-top:4px}
+
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;padding-top:1rem;border-top:0.5px solid #ebe9e1}
+.nav-btn{padding:8px 16px;border-radius:8px;border:0.5px solid #d3d1c7;background:transparent;cursor:pointer;font-size:13px;color:#1a1a1a}
+.nav-btn:hover{background:#f1efe8}
+.nav-btn.primary{background:#534AB7;border-color:#534AB7;color:#fff;font-weight:500}
+.nav-btn.primary:hover{background:#3C3489}
+.nav-count{font-size:12px;color:#aaa}
+.nav-count span{font-weight:500;color:#1a1a1a}
+
+.result-section{margin-bottom:1.5rem}
+.overall-card{display:flex;align-items:center;gap:16px;padding:1.1rem 1.4rem;background:#f1efe8;border-radius:12px;margin-bottom:1.5rem}
+.overall-pct{font-size:40px;font-weight:500;line-height:1;color:#1a1a1a}
+.overall-pct span{font-size:20px;color:#888780}
+.overall-right{flex:1}
+.overall-label{font-size:11px;color:#888780;margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em;font-weight:500}
+.overall-verdict{font-size:15px;font-weight:500}
+.overall-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;margin-top:4px}
+.badge-green{background:#E1F5EE;color:#085041}
+.badge-amber{background:#FAEEDA;color:#633806}
+.badge-red{background:#FCEBEB;color:#791F1F}
+.badge-purple{background:#EEEDFE;color:#3C3489}
+
+.phase-bars{margin-bottom:1.5rem}
+.pb-row{margin-bottom:10px}
+.pb-header{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px}
+.pb-name{color:#1a1a1a;font-weight:500}
+.pb-pct{color:#888780}
+.pb-bg{height:7px;background:#e8e6de;border-radius:4px;overflow:hidden}
+.pb-fill{height:100%;border-radius:4px;transition:width .5s .1s}
+
+.feedback-card{padding:1.1rem 1.4rem;border-radius:10px;border:0.5px solid #e0ded6;background:#f9f8f6;margin-bottom:1rem}
+.feedback-title{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:6px}
+.feedback-body{font-size:13px;color:#5F5E5A;line-height:1.65;text-align:justify}
+
+.alerts{margin-bottom:1rem}
+.alert-item{padding:8px 12px;border-radius:7px;background:#FAEEDA;border-left:3px solid #EF9F27;margin-bottom:6px;font-size:12.5px;color:#633806;line-height:1.5}
+.critical-item{background:#FCEBEB;border-left-color:#E24B4A;color:#791F1F}
+
+.priority-list{margin-top:1rem}
+.priority-title{font-size:12px;font-weight:500;color:#3C3489;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.p-item{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:#EEEDFE;border-radius:7px;margin-bottom:6px;font-size:12.5px;color:#3C3489;line-height:1.5;text-align: justify}
+.p-dot{width:18px;height:18px;border-radius:50%;background:#534AB7;color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+.action-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:1.5rem;justify-content:center}
+.restart-btn{padding:9px 18px;border-radius:8px;border:0.5px solid #c7adec;background:transparent;cursor:pointer;font-size:13px;color:#1a1a1a}
+.restart-btn:hover{background:#c7adec}
+.ref-note{margin-top:2rem;padding-top:1rem;border-top:0.5px solid #ebe9e1;font-size:11px;color:#0f0f0f;line-height:1.6;text-align:justify}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header-band">
+    <div class="header-tag">Seminário de Tese I &nbsp;·&nbsp; Pré-qualificação</div>
+    <div class="header-title">Diagnóstico de projeto de tese</div>
+    <div class="header-sub">O que precisa estar consolidado antes da banca de qualificação? </div>
+  </div>
+
+  <div class="header-band">
+    <div class="header-tag">Sobre a ferramenta</div>
+    <div class="header-title">Como este diagnóstico foi desenvolvido?</div>
+    <div class="header-sub">Este diagnóstico foi desenvolvido no âmbito da disciplina Seminário de Tese I, ministrada pelo Prof. Dr. Anielson Barbosa da Silva no Programa de Pós-Graduação em Administração da UFPB (PPGA-UFPB). A partir da leitura do texto indicado pelo professor — Freitas et al. (2019) —, o grupo composto pelas doutorandas Andressa, Dayanna, Jéssica e Mayne identificou uma oportunidade de transformar os principais erros e recomendações descritos pelos autores em um instrumento prático de autoavaliação, voltado para doutorandos(as) em fase de preparação para a banca de qualificação.
+A construção do instrumento foi realizada em parceria com a inteligência artificial — Claude Sonnet 4.6, da Anthropic (março de 2026) —, em um processo colaborativo no qual a IA atuou como ferramenta de desenvolvimento do código, que foi posteriormente avaliado e revisado pela equipe. O conteúdo, os critérios de avaliação e as escolhas de organização do diagnóstico, no entanto, foram orientados pela expertise do grupo na elaboração de instrumentos diagnósticos e pelo domínio das integrantes sobre o processo de construção de pesquisa em nível doutoral. O resultado é, portanto, uma produção do grupo, mediada por IA.</div>
+  </div>
+
+ <div class="header-band">
+    <div class="header-tag">ORIENTAÇÕES</div>
+    <div class="header-title">Como usar este instrumento:</div>
+    <div class="header-sub">Responda cada critério com honestidade, pensando no estágio atual do seu projeto. A escala vai de <strong>1 (não / ainda não)</strong> a <strong>7 (sim, plenamente consolidado)</strong>. O objetivo é ajudá-lo(a) a identificar e refletir sobre o que ainda pode ser melhorado no seu projeto de tese antes da qualificação.
+    Ao final do diagnóstico, você verá um resumo em percentuais por categoria. Navegue pelas categorias abaixo para responder. Tudo fica salvo automaticamente. Se não souber responder, você pode deixar em branco. Porém, saiba que critérios não respondidos puxam a pontuação para baixo, o que é intencional: se você não respondeu, o instrumento assume que aquele ponto ainda não está consolidado.</div>
+  </div>
+
+  <div id="app"></div>
+
+  <div class="ref-note"><strong>Aviso importante:</strong> Este diagnóstico é um instrumento de reflexão, não um veredito. Ele foi construído com base na literatura sobre o processo de construção de teses doutorais e tem como único objetivo ajudá-lo(a) a identificar pontos de atenção no seu projeto — não avaliar sua capacidade como pesquisador(a).
+Toda autoavaliação tem limitações: a percepção que temos do nosso próprio trabalho raramente coincide com exatidão com a avaliação externa, e isso é natural. Uma pontuação baixa não significa que seu projeto está condenado — significa que há aspectos que merecem mais atenção antes da qualificação. Uma pontuação alta, por sua vez, não garante uma defesa tranquila: a banca tem sua própria leitura, suas próprias expectativas e fará perguntas que nenhum instrumento consegue antecipar.
+O doutorado é um processo longo, não-linear e, muitas vezes, desconfortável. Resultados insatisfatórios neste diagnóstico são parte esperada de quem ainda está construindo. O que importa não é o número que aparece na tela, mas o que você decide fazer com as lacunas que ele revela.
+Use este material como ponto de partida para uma conversa com seu(sua) orientador(a) — não como uma sentença.</div>
+
+  <div class="ref-note"><strong>Pontuação de cada critério:</strong>
+   Cada critério recebe um valor de 1 a 7, escolhido pelo aluno. Se o aluno não respondeu, o valor é 0 — mas o 0 não entra no cálculo como resposta, ele simplesmente representa "não respondido". </div>
+
+   <div class="ref-note"><strong>Pontuação de cada fase:</strong>
+   Para cada fase, o cálculo é: <strong> pontuação da fase (%) = soma dos valores respondidos / (número de critérios × 7) × 100.</strong> Por exemplo, a fase de Literatura tem 7 critérios. Se o aluno respondeu 5, 6, 4, 7, 3, 6, 5, a soma é 36. O máximo possível é 7 × 7 = 49. Então: 36 / 49 × 100 = 73%. Repare que o denominador é sempre fixo — é sempre o número total de critérios da fase multiplicado por 7, independentemente de quantos foram respondidos. Isso significa que critérios não respondidos puxam a pontuação para baixo, o que é intencional: se você não respondeu, o instrumento assume que aquele ponto ainda não está consolidado.</div>
+  
+   <div class="ref-note"><strong>Pontuação geral:</strong> A pontuação geral agrega todas as fases juntas, sem peso diferente por fase: <strong>pontuação geral (%) = soma de todos os valores respondidos / (total de critérios × 7) × 100. </strong> Isso significa que fases com mais critérios têm mais peso no resultado geral. A fase de Tema tem 8 critérios e a fase de Coerência tem 5, então o Tema contribui proporcionalmente mais para o percentual final.</div>
+
+   <div class="ref-note"><strong>O resultado final é classificado assim:</strong> 90% ou mais — Projeto muito bem encaminhado; 70% a 89% — Projeto bom; 50% a 69% — Atenção recomendada; Abaixo de 50% — Bases não consolidadas. </div>
+
+   <div class="ref-note"><strong>Instrumento elaborado com base em:</strong> FREITAS, H. M. R.; PESCE, G.; MARCOLIN, C. B.; BEHR, A.; MARTENS, C. D. P. Processo de construção de uma tese de doutorado na área de Administração: produzindo sentido a partir de interação orientador-orientando. <em>ConTexto</em>, Porto Alegre, v. 19, n. 43, p. 58-73, set./dez. 2019.</div>
+
+   <div class="ref-note"><strong>Desenvolvido por:</strong> Andressa Sullamyta Pessoa de Lima Torres (PPGA-UFPB); Jéssica Monteiro Valverde (PPGA-UFPB); Mayne Ramos Almeida Cardoso (PPGA-UFPB); Dayanna dos Santos Costa Maciel (PPGA-UFPB). Dúvidas, elogios ou para reportar problemas, entre em contato com: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c7a6a9a3b5a2b4b4a6e9b3a8b5b5a2b487a6a4a6a3a2aaaea4a8e9b2a1b7a5e9a5b5">[email&#160;protected]</a>.</div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const phases = [
+  {
+    id: 0,
+    short: "Tema",
+    title: "1 — Maturidade do tema e do problema",
+    desc: "A qualificação exige que você defenda um problema de pesquisa claro, delimitado e relevante. Avalie se o seu tema já tem esse nível de amadurecimento.",
+    why: "<strong>Erros mais comuns nesta fase:</strong> tema amplo demais; hipóteses sem compromisso científico; falta de desafio intelectual real; dificuldade em comunicar o tema de forma clara e dinâmica; escolha de temas desmotivadores, que não sustentam o esforço solitário do doutorado; e dificuldade para resumir a pesquisa em poucas palavras.",
+    color: "#534AB7",
+    questions: [
+      {
+        q: "Consigo explicar minha pesquisa com uma ideia/frase objetiva, ou seja, sem rodeios e sem precisar dar longos contextos?",
+        note: null
+      },
+      {
+        q: "Meu tema está suficientemente delimitado: não é amplo demais, não tenta resolver o mundo, e tem um foco claro?",
+        note: null
+      },
+      {
+        q: "Meu tema me desafia intelectualmente, isto é, ele exige que eu desenvolva competências, perspectivas ou abordagens que ainda não tenho consolidadas?",
+        note: "Para pensar: em que você vai crescer como pesquisador(a) ao final desta tese? Esse crescimento está claro?"
+      },
+      {
+        q: "Tenho uma única pergunta de pesquisa central, formulada de forma clara e capaz de orientar todo o projeto?",
+        note: null
+      },
+      {
+        q: "Consigo justificar por que meu tema é relevante para o campo, ou seja, tenho clareza sobre qual lacuna preenche e que contribuição traz?",
+        note: null
+      },
+      {
+        q: "Minha tese aprofunda genuinamente o que já foi feito, ou seja, avança o conhecimento de forma consistente?",
+        note: null
+      },
+      {
+        q: "Cada construto/conceito do meu projeto está ali porque contribui diretamente para responder à pergunta de pesquisa (e não porque eu me interessei por ele durante o processo)?",
+        note: "Para pensar: De cada construto/conceito que está no seu projeto agora, você consegue explicar por que ele é necessário para responder à sua pergunta de pesquisa — ou ele está ali por uma questão mais secundária? Às vezes, retirar um conceito deixa o projeto mais claro do que mantê-lo."
+      },
+      {
+        q: "Meu tema é factível dentro do prazo do doutorado — considerando o tempo para leitura, campo, escrita e defesa?",
+        note: null
+      }
+    ]
+  },
+  {
+    id: 1,
+    short: "Literatura",
+    title: "2 — Revisão de literatura",
+    desc: "Na qualificação, a banca vai avaliar se você domina o campo teórico no qual sua pesquisa se insere. Avalie a solidez do seu mapeamento bibliográfico.",
+    why: "<strong>Erros mais comuns nesta fase:</strong> revisão frágil sem autores clássicos; busca bibliográfica com palavras-chave inadequadas; desconhecimento das diferentes correntes teóricas; e falta de identificação da lacuna a ser preenchida.",
+    color: "#185FA5",
+    questions: [
+      {
+        q: "Li os autores clássicos centrais do meu tema diretamente na fonte original — não apenas via citações e sínteses de terceiros ou de IAs?",
+        note: null
+      },
+      {
+        q: "Minha revisão inclui publicações recentes (últimos 5 anos) de diferentes países e contextos sobre meu tema?",
+        note: null
+      },
+      {
+        q: "Realizei buscas em múltiplas bases de dados, com palavras-chave variadas e em mais de um idioma?",
+        note: "Para pensar: Se você está dizendo 'fiz uma bibliometria e não achei nada', isso quase sempre indica problema nos filtros e termos de busca, não ausência de literatura."
+      },
+      {
+        q: "Consegui identificar e discorrer sobre as diferentes correntes teóricas sobre meu tema — inclusive visões antagônicas e debates em aberto?",
+        note: null
+      },
+      {
+        q: "Meu projeto segue uma linha teórica clara — e se alguém me perguntar 'por que essa e não aquela?', eu tenho uma resposta?",
+        note: null
+      },
+      {
+        q: "Minha revisão de literatura deixa evidente por que minha pesquisa precisa existir e qual lacuna ela preenche?",
+        note: null
+      },
+      {
+        q: "Consigo situar minha pesquisa no estado da arte do campo — mostrando onde e como ela se encaixa e o que acrescenta?",
+        note: null
+      }
+    ]
+  },
+  {
+    id: 2,
+    short: "Modelo conceitual",
+    title: "3 — Modelo conceitual",
+    desc: "O modelo conceitual é a 'espinha dorsal' teórica da tese — ele conecta os conceitos centrais entre si e com a pergunta de pesquisa. A banca de qualificação vai examinar isso com atenção.",
+    why: "<strong>Erros mais comuns nesta fase</strong>: ausência de modelo conceitual; modelo construído sem base na literatura; ou modelo que tenta abarcar todos os conceitos lidos em vez de destacar apenas os centrais.",
+    color: "#0F6E56",
+    questions: [
+      {
+        q: "Tenho (ou estou construindo) um modelo conceitual que representa visualmente os conceitos centrais e suas relações (framework)?",
+        note: null
+      },
+      {
+        q: "Meu modelo conceitual está ancorado na revisão de literatura — cada elemento tem sustentação teórica explícita?",
+        note: null
+      },
+      {
+        q: "O modelo conceitual é enxuto: contempla apenas os conceitos diretamente necessários para responder à minha pergunta?",
+        note: "Para pensar: Não é porque você leu sobre um conceito que ele precisa entrar no modelo. Inclua apenas o que é central para o argumento."
+      },
+      {
+        q: "O modelo conceitual conecta claramente o referencial teórico à pergunta de pesquisa e aos objetivos?",
+        note: null
+      },
+      {
+        q: "Apresentei meu modelo conceitual ao(à) meu(minha) orientador(a) e temos acordo sobre os conceitos centrais e suas relações?",
+        note: null
+      },
+      {
+        q: "Consigo explicar as diferenças e relações entre os conceitos do meu modelo para alguém de fora da área — sem ficar preso a jargões e linguagem excessivamente técnica?",
+        note: "Para pensar: Bons projetos de pesquisa pensam na democratização da ciência."
+      }
+    ]
+  },
+  {
+    id: 3,
+    short: "Método",
+    title: "4 — Desenho metodológico",
+    desc: "Na qualificação, a banca vai questionar diretamente suas escolhas metodológicas. Avalie se você já tem clareza sobre como a pesquisa será conduzida e por quê.",
+    why: "<strong>Erros mais comuns nesta fase</strong>: definir o método antes de consolidar o problema de pesquisa; confundir método de trabalho com método de pesquisa; usar múltiplos métodos por insegurança sem justificar a complementaridade que eles possuem entre si; não ter alinhamento entre ontologia > epistemologia > metodologia > método de pesquisa > técnicas de pesquisa.",
+    color: "#854F0B",
+    questions: [
+      {
+        q: "Defini o método de pesquisa que utilizarei — e essa escolha é coerente com minha pergunta de pesquisa e com o paradigma que adoto?",
+        note: null
+      },
+      {
+        q: "Consigo justificar minha escolha metodológica: por que este método e não outro diante do meu problema?",
+        note: "Para pensar: A escolha do método não é fruto de insegurança ou somente da vontade de usar as técnicas mais confortáveis para mim."
+      },
+      {
+        q: "Se utilizo mais de um método, consigo explicar claramente como eles se complementam?",
+        note: null
+      },
+      {
+        q: "Tenho clareza sobre: quem ou o que será investigado, como os dados serão coletados e como serão analisados?",
+        note: null
+      },
+      {
+        q: "Fiz uma verificação de viabilidade: com os dados que pretendo coletar, é possível responder à minha pergunta de pesquisa?",
+        note: "Exercício útil: tente simular como ficaria um resultado possível. Se você não consegue imaginar, o método pode não estar adequado ao problema."
+      },
+      {
+        q: "Tenho clareza sobre os critérios de seleção dos participantes/corpus e consigo justificá-los pela legitimidade e não pela conveniência?",
+        note: null
+      }
+    ]
+  },
+  {
+    id: 4,
+    short: "Coerência",
+    title: "5 — Coerência interna do projeto",
+    desc: "Um projeto de tese não é uma soma de partes independentes — é um argumento integrado. A banca de qualificação avalia se o projeto 'fecha', ou seja, se todas as peças se sustentam juntas.",
+    why: "<strong>Erros mais comuns nesta fase</strong>: desalinhamento entre título, pergunta e objetivos; método incoerente com o posicionamento epistemológico ou insuficiente para responder à pergunta; promessas no título/objetivo que o projeto não entrega.",
+    color: "#993556",
+    questions: [
+      {
+        q: "Há alinhamento (ou um fio condutor) explícito entre todos os elementos centrais do projeto: título, pergunta de pesquisa, objetivos, referencial teórico, modelo conceitual e método?",
+        note: null
+      },
+      {
+        q: "Meu título provisório está breve (idealmente menos de 15 palavras), sem repetições, e reflete com precisão o que a tese investigará?",
+        note: null
+      },
+      {
+        q: "Meus objetivos específicos são derivados do objetivo geral — cada um deles contribui diretamente para responder à pergunta de pesquisa?",
+        note: "Para pensar: Objetivos específicos não são etapas de um roteiro — são recortes analíticos do objetivo geral. Se os seus parecem uma lista de tarefas ('levantar', 'descrever', 'analisar'), vale verificar se eles realmente delimitam dimensões do problema ou apenas descrevem o que você vai fazer."
+      },
+      {
+        q: "Não prometo no título ou nos objetivos algo que o método escolhido não terá condições de entregar?",
+        note: null
+      },
+      {
+        q: "Se tivesse que apresentar o projeto inteiro em uma única imagem ou esquema, eu conseguiria — e ele faria sentido para quem nunca ouviu falar da minha pesquisa?",
+        note: "Este é um dos exercícios mais reveladores: se o esquema não 'fecha', é sinal de que o projeto ainda precisa de trabalho."
+      }
+    ]
+  },
+  {
+    id: 5,
+    short: "Gestão e foco",
+    title: "6 — Gestão do processo e do foco",
+    desc: "A qualificação exige não apenas que o projeto esteja bom, mas que você efetivamente entregue os resultados prometidos. Avalie se você está gerindo bem o processo e protegendo o tempo dedicado à tese.",
+    why: "<strong>Erros mais comuns nesta fase</strong>: dispersão em projetos paralelos; procrastinação motivada pela sobrecarga de leituras das disciplinas; dificuldade de dizer 'não'; e ausência de um cronograma pactuado com o(a) orientador(a).",
+    color: "#5F5E5A",
+    questions: [
+      {
+        q: "Tenho um cronograma de trabalho pactuado com meu(minha) orientador(a), com metas para chegar bem preparado(a) à defesa?",
+        note: null
+      },
+      {
+        q: "Estou conseguindo dizer 'não' a projetos paralelos, convites e oportunidades cuja temática não converge com minha tese?",
+        note: null
+      },
+      {
+        q: "Registro minhas leituras, ideias e discussões com o(a) orientador(a) de forma organizada — não dependo apenas da memória?",
+        note: null
+      },
+      {
+        q: "Mantenho comunicação aberta e frequente com meu(minha) orientador(a), incluindo dúvidas, angústias e impasses do processo?",
+        note: "Silêncio na relação orientador-orientando é quase sempre um sinal de problema — não de que tudo vai bem."
+      },
+      {
+        q: "Consigo equilibrar as demandas das disciplinas do programa com o avanço efetivo da pesquisa da tese?",
+        note: null
+      }
+    ]
+  },
+  {
+    id: 6,
+    short: "Prontidão",
+    title: "7 — Prontidão para a qualificação",
+    desc: "Avalie sua capacidade de comunicar e defender o projeto diante de uma banca examinadora.",
+    why: "<strong>Erros mais comuns nesta fase</strong>: slides muito longos e desorganizados; dificuldade de sintetizar o projeto em esquemas visuais; e despreparo para responder a questionamentos sobre as escolhas teóricas e metodológicas.",
+    color: "#3B6D11",
+    questions: [
+      {
+        q: "Já realizei ao menos uma apresentação do meu projeto para colegas ou outros públicos pertinentes, recebendo retorno crítico?",
+        note: null
+      },
+      {
+        q: "Tenho (ou estou construindo) um esquema visual único que comunica todo o projeto de forma integrada e clara?",
+        note: null
+      },
+      {
+        q: "Consigo responder com segurança às perguntas mais prováveis da banca: por que este tema? por que este método? qual a contribuição?",
+        note: null
+      },
+      {
+        q: "Sei distinguir o que é central no meu projeto daquilo que é periférico — e consigo apresentar apenas o essencial no tempo disponível?",
+        note: null
+      },
+      {
+        q: "Tenho domínio suficiente do referencial teórico para discutir escolhas alternativas e justificar por que optei pelo caminho que escolhi?",
+        note: null
+      },
+      {
+        q: "A minha apresentação (slides) está organizada para contar a história do meu projeto de uma forma adequada e convincente?",
+        note: null
+      }
+    ]
+  },
+  {
+    id: 7,
+    short: "Questões gerais",
+    title: "8 — Ética, documentação e integridade da pesquisa",
+    desc: "A qualificação pressupõe não apenas um projeto intelectualmente sólido, mas também um processo conduzido com rigor ético e bem documentado. Avalie se esses aspectos estão sendo cuidados desde o início.",
+    why: "<strong>Erros mais comuns nesta fase</strong>: não guardar os TCLEs (Termos de Consentimento) assinados de forma organizada e segura; não registrar as decisões metodológicas no momento em que foram tomadas; perder dados por ausência de backup; incorporar texto gerado por IA sem revisão crítica; não declarar o uso de IA.",
+    color: "#854F0B",
+    questions: [
+      {
+        q: "Minha pesquisa exige aprovação em Comitê de Ética — e se sim, já iniciei esse processo?",
+        note: "Para pensar: pesquisas com seres humanos exigem aprovação prévia à coleta. Começar o campo sem aprovação pode inviabilizar o uso dos dados."
+      },
+      {
+        q: "Tenho clareza sobre como obterei e registrarei o consentimento dos participantes da pesquisa?",
+        note: null
+      },
+      {
+        q: "Estou documentando meu processo de pesquisa (audit trail) — decisões, mudanças de rota, conversas com o(a) orientador(a) — de forma que seja possível reconstruir o percurso depois?",
+        note: "Para pensar: a metodologia da tese é uma narrativa do que foi feito e por quê. Sem registros, essa narrativa depende exclusivamente da memória."
+      },
+      {
+        q: "Meus arquivos estão organizados e com backup em mais de um lugar — nuvem, HD externo ou similar?",
+        note: null
+      },
+      {
+        q: "A minha apresentação (slides) está organizada para contar a história do meu projeto de uma forma adequada e convincente?",
+        note: null
+      },
+      {
+        q: "Cito corretamente todas as fontes que influenciaram meu trabalho — inclusive as que chegaram até mim de forma indireta, por indicação de colegas, IAs ou do(a) orientador(a)?",
+        note: null
+      },
+      {
+        q: "As questões de formatação e estilo do manuscrito já foram adequadas de acordo com as normas do Programa?",
+        note: null
+      }
+    ]
+  }
+];
+
+const answers = {};
+let currentPhase = 0;
+let showResult = false;
+
+function getScore(qid){ return answers[qid] || 0; }
+
+function totalQ(pi){ return phases[pi].questions.length; }
+
+function phaseScore(pi){
+  const p = phases[pi];
+  let s = 0;
+  p.questions.forEach((_,qi) => { s += getScore(pi+'-'+qi); });
+  const max = p.questions.length * 7;
+  return { sum: s, max: max, pct: Math.round((s / max) * 100) };
+}
+
+function overallScore(){
+  let s = 0, max = 0;
+  phases.forEach((_,pi) => { const sc = phaseScore(pi); s += sc.sum; max += sc.max; });
+  return max > 0 ? Math.round((s / max) * 100) : 0;
+}
+
+function phaseDone(pi){
+  return phases[pi].questions.every((_,qi) => answers[pi+'-'+qi] > 0);
+}
+
+function answeredCount(pi){
+  return phases[pi].questions.filter((_,qi) => answers[pi+'-'+qi] > 0).length;
+}
+
+function totalAnswered(){
+  let n = 0;
+  phases.forEach((_,pi) => { n += answeredCount(pi); });
+  return n;
+}
+
+function barColor(pct){
+  if(pct >= 70) return '#1D9E75';
+  if(pct >= 45) return '#EF9F27';
+  return '#E24B4A';
+}
+
+function feedbackData(pct){
+  if(pct >= 90) return {
+    badge: 'badge-green', verdict: 'Projeto bem encaminhado',
+    text: 'O diagnóstico sugere que seu projeto apresenta maturidade consistente em todas as dimensões avaliadas. Os fundamentos estão bem construídos — tema delimitado, literatura mapeada, modelo conceitual estruturado e método justificado. Isso não significa que o trabalho está encerrado: use o tempo restante antes da qualificação para revisar a formatação, ensaiar a apresentação e consolidar o alinhamento com seu(sua) orientador(a). Você está bem posicionado(a).'
+  };
+  if(pct >= 70) return {
+    badge: 'badge-purple', verdict: 'Projeto bom',
+    text: 'O projeto está avançando em boa direção, com bases razoavelmente sólidas. Ainda assim, há dimensões que merecem atenção antes da qualificação. Identifique as fases com pontuação mais baixa e priorize-as nas próximas semanas — uma lacuna não resolvida no projeto tende a aparecer exatamente nas perguntas que a banca fará. Leve o diagnóstico para sua próxima reunião de orientação e construa um plano concreto para os ajustes necessários.'
+  };
+  if(pct >= 50) return {
+    badge: 'badge-amber', verdict: 'Atenção recomendada',
+    text: 'O diagnóstico aponta lacunas relevantes que precisam ser endereçadas antes da qualificação. Avançar sem consolidar os fundamentos — tema bem delimitado, revisão de literatura sólida, modelo conceitual estruturado e método coerente com a pergunta — aumenta o risco de uma qualificação com exigências de revisão significativas. Revise as fases com pontuação abaixo de 60%, leve os pontos críticos para seu(sua) orientador(a) com urgência e estabeleça metas claras para as próximas semanas.'
+  };
+  return {
+    badge: 'badge-red', verdict: 'Bases ainda não consolidadas',
+    text: 'O diagnóstico indica que as bases do projeto ainda precisam de consolidação antes de avançar para a qualificação. Isso não é um julgamento sobre sua capacidade — é um sinal de que o momento agora exige foco total nos fundamentos: definir com clareza a pergunta de pesquisa, aprofundar a revisão de literatura e estruturar o desenho metodológico. Interrompa avanços secundários e priorize uma conversa honesta com seu(sua) orientador(a) sobre o que precisa ser resolvido e em que prazo.'
+  };
+}
+
+function criticalPhases(){
+  return phases.filter((_,pi) => {
+    const sc = phaseScore(pi);
+    return sc.pct > 0 && sc.pct < 70;
+  });
+}
+
+function priorityActions(pct){
+  const crit = criticalPhases();
+  if(crit.length === 0) return [];
+  const actions = [];
+  crit.forEach(p => {
+    if(p.id === 0) actions.push('Volte ao essencial: escreva sua pergunta de pesquisa em uma única frase e teste se ela é clara, delimitada e factível dentro do prazo do doutorado. Revise se cada conceito presente no projeto está ali porque é necessário para responder a essa pergunta — ou apenas porque você se interessou por ele. Leve essa versão resumida para discutir com seu(sua) orientador(a) antes de qualquer outro avanço.');
+    if(p.id === 1) actions.push('Revise sua estratégia de busca bibliográfica: diversifique as bases de dados, os idiomas e os termos utilizados. Leia os autores clássicos centrais do seu tema diretamente na fonte. Mapeie as diferentes correntes teóricas existentes, incluindo visões antagônicas, e identifique com clareza qual lacuna sua pesquisa se propõe a preencher. Sem isso, a banca não conseguirá avaliar a contribuição do seu projeto.');
+    if(p.id === 2) actions.push('Construa ou revise seu modelo conceitual: ele precisa ser enxuto, ancorado na literatura e capaz de conectar visualmente os conceitos centrais à sua pergunta de pesquisa. Evite incluir conceitos apenas porque você os leu — inclua apenas o que é indispensável para o argumento. Depois de estruturado, apresente o modelo ao(à) seu(sua) orientador(a) e verifique se há acordo sobre os elementos centrais e suas relações.');
+    if(p.id === 3) actions.push('Consolide o desenho metodológico tendo como ponto de partida sua pergunta de pesquisa — não o contrário. Verifique se há coerência entre seu posicionamento ontológico e epistemológico e as escolhas metodológicas que está fazendo. Justifique por que este método e não outro. Se usar mais de um método, explique como eles se complementam. Por fim, simule um resultado possível: com os dados que planeja coletar, você conseguirá de fato responder à sua pergunta?');
+    if(p.id === 4) actions.push('Faça uma leitura transversal do seu projeto verificando o alinhamento entre título, pergunta de pesquisa, objetivos, referencial teórico, modelo conceitual e método. Confirme que o título está breve e preciso, que os objetivos específicos são recortes analíticos do objetivo geral — não listas de tarefas — e que o método escolhido tem condições reais de entregar o que você prometeu. Um exercício útil: tente representar o projeto inteiro em um único esquema visual. Se ele não fechar, o projeto ainda precisa de trabalho.');
+    if(p.id === 5) actions.push('Pactue com seu(sua) orientador(a) um cronograma com metas até a defesa e revise-o periodicamente. Proteja o tempo dedicado à tese: avalie com critério os convites e oportunidades paralelas que não convergem com sua pesquisa. Mantenha registros organizados das suas leituras, decisões e conversas com o(a) orientador(a) — não dependa da memória para reconstruir seu percurso. Comunicação aberta e frequente com o(a) orientador(a) não é opcional.');
+    if(p.id === 6) actions.push('Agende uma apresentação do projeto para colegas ou demais interessados antes da qualificação — o retorno externo revela lacunas que você não consegue ver de dentro. Construa um esquema visual único que comunique o projeto de forma integrada. Prepare respostas para as perguntas mais prováveis da banca: por que este tema, por que este método, qual a contribuição. Ensaie com gravação, assista ao resultado e melhore. Organize seus slides para contar a história do projeto — não somente para descrever cada etapa.');
+    if(p.id === 7) actions.push('Se sua pesquisa envolve seres humanos, verifique imediatamente se precisa de aprovação no Comitê de Ética — esse processo leva tempo e não pode ser iniciado depois que o campo já começou. Organize sua documentação agora: crie uma estrutura de pastas clara, ative backup automático e comece a registrar suas decisões metodológicas à medida que elas acontecem (diário de campo). Em relação ao uso de IA, estabeleça critérios claros: revise criticamente tudo que for gerado por ferramenta antes de incorporar ao trabalho e verifique as normas do seu programa sobre declaração de uso.');
+  });
+  return actions;
+}
+
+function renderPhase(){
+  const p = phases[currentPhase];
+  const answered = answeredCount(currentPhase);
+  const pct = answered / p.questions.length * 100;
+
+  let html = '';
+
+  html += `<div class="phase-nav">`;
+  phases.forEach((ph,pi) => {
+    const cls = pi === currentPhase ? 'active' : phaseDone(pi) ? 'done' : '';
+    html += `<button class="pnav-btn ${cls}" onclick="goPhase(${pi})">${ph.short}</button>`;
+  });
+  html += `<button class="pnav-btn pnav-result" onclick="goResult()">Resultado</button>`;
+  html += `</div>`;
+
+  html += `<div class="progress-wrap">`;
+  html += `<div class="progress-meta"><span>${p.short}</span><span>${answered}/${p.questions.length} respondidas</span></div>`;
+  html += `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`;
+  html += `</div>`;
+
+  html += `<div class="phase-header">`;
+  html += `<div class="phase-tag">Pré-qualificação · Fase ${p.id + 1} de ${phases.length}</div>`;
+  html += `<div class="phase-title">${p.title}</div>`;
+  html += `<div class="phase-desc">${p.desc}</div>`;
+  html += `<div class="phase-why">${p.why}</div>`;
+  html += `</div>`;
+
+  p.questions.forEach((item, qi) => {
+    const qid = currentPhase + '-' + qi;
+    const v = getScore(qid);
+    html += `<div class="q-block">`;
+    html += `<div class="q-num">Critério ${qi + 1}</div>`;
+    html += `<div class="q-text">${item.q}</div>`;
+    if(item.note) html += `<div class="q-note">${item.note}</div>`;
+    html += `<div class="scale-btns">`;
+    for(let i = 1; i <= 7; i++){
+      const sel = v === i ? `sel-${i}` : '';
+      html += `<button class="s-btn ${sel}" onclick="setAnswer('${qid}',${i})">${i}</button>`;
+    }
+    html += `</div>`;
+    html += `<div class="scale-labels"><span>1 — Não / ainda não</span><span>7 — Sim, plenamente</span></div>`;
+    html += `</div>`;
+  });
+
+  html += `<div class="nav-row">`;
+  if(currentPhase > 0) html += `<button class="nav-btn" onclick="goPhase(${currentPhase - 1})">← Anterior</button>`;
+  else html += `<span></span>`;
+  html += `<div class="nav-count">Total respondido: <span>${totalAnswered()}/${phases.reduce((s,p)=>s+p.questions.length,0)}</span></div>`;
+  if(currentPhase < phases.length - 1) html += `<button class="nav-btn primary" onclick="goPhase(${currentPhase + 1})">Próxima fase →</button>`;
+  else html += `<button class="nav-btn primary" onclick="goResult()">Ver diagnóstico →</button>`;
+  html += `</div>`;
+
+  return html;
+}
+
+function renderResult(){
+  const ov = overallScore();
+  const fb = feedbackData(ov);
+  const actions = priorityActions(ov);
+
+  let html = '';
+
+  html += `<div class="phase-nav">`;
+  phases.forEach((ph,pi) => {
+    const cls = phaseDone(pi) ? 'done' : '';
+    html += `<button class="pnav-btn ${cls}" onclick="goPhase(${pi})">${ph.short}</button>`;
+  });
+  html += `<button class="pnav-btn pnav-result active" onclick="goResult()">Resultado</button>`;
+  html += `</div>`;
+
+  html += `<div class="overall-card">`;
+  html += `<div class="overall-pct">${ov}<span>%</span></div>`;
+  html += `<div class="overall-right">`;
+  html += `<div class="overall-label">Prontidão para a qualificação</div>`;
+  html += `<div class="overall-verdict">${fb.verdict}</div>`;
+  html += `<div class="overall-badge ${fb.badge}">${fb.badge === 'badge-green' ? 'Pronto(a) para qualificar' : fb.badge === 'badge-purple' ? 'Revisão simples' : fb.badge === 'badge-amber' ? 'Revisar assim que possível' : 'Revisar com urgência'}</div>`;
+  html += `</div></div>`;
+
+  html += `<div class="phase-bars">`;
+  phases.forEach((_,pi) => {
+    const sc = phaseScore(pi);
+    const p = phases[pi];
+    html += `<div class="pb-row">`;
+    html += `<div class="pb-header"><span class="pb-name">${p.title}</span><span class="pb-pct">${sc.pct}%</span></div>`;
+    html += `<div class="pb-bg"><div class="pb-fill" style="width:${sc.pct}%;background:${barColor(sc.pct)}"></div></div>`;
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="feedback-card">`;
+  html += `<div class="feedback-title">Leitura do diagnóstico</div>`;
+  html += `<div class="feedback-body">${fb.text}</div>`;
+  html += `</div>`;
+
+  if(actions.length > 0){
+    html += `<div class="priority-list">`;
+    html += `<div class="priority-title">Ações prioritárias antes da qualificação</div>`;
+    actions.forEach((a, i) => {
+      html += `<div class="p-item"><div class="p-dot">${i+1}</div><span>${a}</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  const critical = criticalPhases();
+  if(critical.length > 0){
+    html += `<div class="alerts" style="margin-top:1rem">`;
+    critical.forEach(p => {
+      const sc = phaseScore(phases.indexOf(p));
+      const cls = sc.pct < 35 ? 'alert-item critical-item' : 'alert-item';
+      html += `<div class="${cls}">Fase com pontuação abaixo de 50%: <strong>${p.title}</strong></div>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `<div class="action-btns">`;
+  html += `<button class="restart-btn" onclick="restart()">Reiniciar diagnóstico</button>`;
+  html += `</div>`;
+
+  return html;
+}
+
+function render(){ document.getElementById('app').innerHTML = showResult ? renderResult() : renderPhase(); }
+function setAnswer(qid, v){ answers[qid] = v; render(); }
+function goPhase(pi){ currentPhase = pi; showResult = false; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function goResult(){ showResult = true; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function restart(){ Object.keys(answers).forEach(k => delete answers[k]); currentPhase = 0; showResult = false; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+render();
+</script>
+</body>
+</html>
